@@ -9,7 +9,7 @@ class Product(models.Model):
 
     #price
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
-    current_price = models.DecimalField(max_digits=10, decimal_places=2)
+    current_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     #quantity
     stock = models.IntegerField(default=0)
@@ -22,6 +22,14 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if self.current_price is None:
+            self.current_price = self.base_price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+    
     class Meta():
         constraints = [
             models.CheckConstraint(
